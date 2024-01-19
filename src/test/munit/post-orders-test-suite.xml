@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="post-orders-test-suite.xml" />
+	<munit:test name="post-orders-test-suite-post-ordersTest" doc:id="eb30c923-751d-4cc0-b52c-479bd2dd6cf2" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Req GET Customer" doc:id="c403d789-f209-4ded-ba1d-bf468e23bbe2" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="92af2544-d9b1-472d-82c1-c0365ab1d6ff" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="customerId" value="#[readUrl('classpath://postorderstest/mock_get_var.dwl')]" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Req POST Order" doc:id="41f9d868-f93e-4f86-bad5-2d4be8d528bd" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="6dd7f132-932d-4f90-82d6-45086049d615" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="orderId" value="#[readUrl('classpath://postorderstest/mock_post_order_var.dwl')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Req POST Item" doc:id="76008c88-1213-45bd-895a-128418b2f5d5" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3d4b424b-412a-4c2a-b4fa-a3d2e32e1863" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://postorderstest/mock_post_item_payload.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="d4624215-7a87-4a65-9a27-9ab26f03702c" >
+				<munit:payload value="#[readUrl('classpath://postorderstest/set_event_payload.dwl')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post-orders" doc:id="5ae910d5-d0e7-4990-b2c9-f0df0f30f173" name="post:\orders:application\json:as-micorp-papi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Payload" doc:id="9d55483f-35c3-4d3f-a562-ed37d2d1c73e" >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postorderstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post-orders-test-suite-post-ordersTest1" doc:id="1fcbec6d-7675-49bb-bcf4-5dd284284e3f" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Req GET Customer" doc:id="21d89b92-9bc5-4c56-9571-a568026a2302" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="92af2544-d9b1-472d-82c1-c0365ab1d6ff" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="customerId" value="#[readUrl('classpath://postorderstest/mock_get_customer_var.dwl')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Req POST Customer" doc:id="93e7746c-bf70-4114-bcbc-57aba1fedfa1" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="90eb51d6-8ec3-446d-b82e-1a5747b791ba" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="customerId" value="#[readUrl('classpath://postorderstest/mock_post_customer_var.dwl')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Req POST Order" doc:id="a1c79252-1306-4cfa-b8df-0e868d2f7a9b" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="6dd7f132-932d-4f90-82d6-45086049d615" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:variables >
+						<munit-tools:variable key="orderId" value="#[readUrl('classpath://postorderstest/mock_post_neworder_var.dwl')]" mediaType="application/json" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Req POST Item" doc:id="eb973509-9000-46b3-bf3b-4b1e48363791" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="3d4b424b-412a-4c2a-b4fa-a3d2e32e1863" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output json --- readUrl('classpath://postorderstest/mock_post_item_payload.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Input" doc:id="130d1c2e-2db2-4f81-bf44-0463edcf71ac" >
+				<munit:payload value="#[readUrl('classpath://postorderstest/set_newevent_payload.dwl')]" />
+
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post-orders" doc:id="06c4abd4-3940-4063-a3b6-1ffa0e54b1dc" name="post:\orders:application\json:as-micorp-papi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Payload" doc:id="77dc51ff-cb93-44b4-a462-d7f45fa8992c" >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postorderstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

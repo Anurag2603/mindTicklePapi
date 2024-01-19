@@ -1,0 +1,14 @@
+http:
+  port: "8091"
+  
+  
+  
+request:
+  host: "micorp-as-sapi.us-e1.cloudhub.io"
+  port: "80"
+  basepath: "api"
+  getCustomer: "customer/{email}"
+  postCustomer: "customer"
+  postOrder: "order"
+  postItem: "item"
+  

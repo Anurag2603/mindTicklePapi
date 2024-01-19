@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="global-error-handler-test-suite.xml" />
+	<munit:test name="global-error-handler-test-suiteTest" doc:id="517d000f-d087-4ba5-acd3-dc620a20f134" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Global error handler" doc:id="ea779cd5-b608-4060-996b-34105508acfc" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="dfa992d9-0ef2-41ce-bca0-72d71ab41145" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference to global error handler" doc:id="c4539ebd-6e4e-4c71-af77-953b7571c994" name="as-micorp-papi-main"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals doc:name="Assert Payload" doc:id="a0860123-aa95-475e-9347-63dec0feec23" actual="#[vars.httpStatus]" expected="#[400]" message="Error!!!"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

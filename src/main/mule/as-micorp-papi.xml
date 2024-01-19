@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+    
+	
+	<flow name="as-micorp-papi-main" doc:id="7db8226b-6606-4aef-928b-6f5c8c3d31a2">
+        <http:listener path="/*" config-ref="HTTP_Listener_config">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <ee:transform doc:name="Correlation Id" doc:id="596b2db3-dfa1-42e1-a8a4-3a82e2ac6a53" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="correlationId" ><![CDATA[attributes.headers.'x-correlation-id']]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<apikit:router config-ref="as-micorp-papi-config" doc:id="dfa992d9-0ef2-41ce-bca0-72d71ab41145"/>
+		<error-handler ref="global-error-handlerError_Handler" />
+    </flow>
+<!-- [STUDIO:"as-micorp-papi-console"]    <flow name="as-micorp-papi-console">
+        <http:listener path="/console/*" config-ref="HTTP_Listener_config">
+            <http:response statusCode="#[vars.httpStatus default 200&#93;">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}&#93;&#93;&#93;></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500&#93;">
+                <http:body><![CDATA[#[payload&#93;&#93;&#93;></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}&#93;&#93;&#93;></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="as-micorp-papi-config" />
+    </flow> [STUDIO] -->
+    <flow name="get:\healthCheck:as-micorp-papi-config" doc:id="761efe21-4b88-4417-9024-5207d21b67c5">
+		<json-logger:logger doc:name="Start" doc:id="b9aa24c8-5901-4745-84ca-33f6c702165d" config-ref="JSON_Logger_Config" message="Entering Subflow"/>
+		<flow-ref doc:name="healthCheck" doc:id="8cb1d8a6-cb0f-42bc-a7ed-d3bef35c0a64" name="health-check-subflow" />
+		<json-logger:logger doc:id="6a5e7ace-829a-4f20-8c1c-3faa0dca5575" config-ref="JSON_Logger_Config" message="Exiting flow reference" doc:name="End" />
+    </flow>
+    <flow name="post:\orders:application\json:as-micorp-papi-config" doc:id="7124b65b-e852-49db-a11a-33a46bcec24b">
+		<json-logger:logger doc:name="Start" doc:id="96bf5bea-c6ae-4f3a-8774-7c58fad5a60a" config-ref="JSON_Logger_Config" message="Entering Subflow" />
+		<flow-ref doc:name="post orders" doc:id="28467d24-4e6f-411f-b8d4-9069e73e28aa" name="post-orders" />
+		<json-logger:logger doc:id="49b743fc-0f4f-4dec-a1f3-fc073c4bef4b" config-ref="JSON_Logger_Config" message="Exiting flow reference" doc:name="End" />
+    </flow>
+</mule>
