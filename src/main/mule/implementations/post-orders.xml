@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<sub-flow name="post-orders" doc:id="91066a9f-74b8-4abb-bc67-8219a5edd111" >
+		<json-logger:logger doc:name="Start" doc:id="a2273b5f-8be1-4e03-955e-e32dcf78bd2b" config-ref="JSON_Logger_Config" message="Process Started"/>
+		<flow-ref doc:name="Flow Reference" doc:id="d975b3f8-d6fb-4e31-a128-c1e0a9f75cb2" name="fetch-customer-sub-flow" />
+		<choice doc:name="Does Customer Exist ?" doc:id="fe31d0b3-21ed-4f4b-b7a1-b3407da88d12" >
+			<when expression="#[vars.customerId == null]">
+				<flow-ref doc:name="Flow Reference" doc:id="73c81706-ff31-402d-a9b9-22679d424beb" name="post-customer-sub-flow" />
+			</when>
+			<otherwise>
+				<json-logger:logger doc:name="Customer Exists" doc:id="c3d15139-bbfb-4ffc-806c-b43948262d6b" config-ref="JSON_Logger_Config" message="Customer Already Exists"/>
+			</otherwise>
+		</choice>
+		<flow-ref doc:name="Flow Reference" doc:id="dd451473-47f0-439f-975f-f1c9390f7183" name="post-order-sub-flow" />
+		<flow-ref doc:name="Flow Reference" doc:id="446d277d-395f-4379-b2da-f8c216af09db" name="post-item-sub-flow" />
+		<ee:transform doc:name="Setting Response" doc:id="1f7c9d22-cef8-4c04-a850-192fb3f31609" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="End" doc:id="64c3a656-b462-49ff-a5d0-7e0c6cc13d32" config-ref="JSON_Logger_Config" message="Process Ended"/>
+	
+</sub-flow>
+	</mule>

@@ -1,0 +1,13 @@
+http:
+  port: "8091"
+  
+  
+  
+request:
+  host: "localhost"
+  port: "8081"
+  basepath: "api"
+  getCustomer: "customer/{email}"
+  postCustomer: "customer"
+  postOrder: "order"
+  postItem: "item"

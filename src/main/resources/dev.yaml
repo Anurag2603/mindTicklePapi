@@ -1,0 +1,20 @@
+http:
+  port: "![aYhMxrAPwdw2/87aDS48aQ==]"
+  
+  
+
+json:
+  logger:
+    application:
+      name: "as-micorp-papi"
+      version: "1.0.0"  
+      
+mule:
+  env: "local"
+  
+  
+  
+#  Client ID:
+#77b4879882524e068f1fa7fd172d265c
+#Client Secret:
+#2a8E7A250Ee14276ae31DeBeea4F8E44

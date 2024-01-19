@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="health-check-test-suite.xml" />
+	<munit:test name="health-check-test-suite-health-check-subflowTest" doc:id="f02b7f30-2d6d-47fe-bd5c-fb03f50681bd" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to health-check-subflow" doc:id="eaf720b5-c202-4c8d-9edb-bbc3c186da23" name="get:\healthCheck:as-micorp-papi-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Payload" doc:id="5b583e26-f416-44a7-ab78-46379577c8c9" >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import healthchecktest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

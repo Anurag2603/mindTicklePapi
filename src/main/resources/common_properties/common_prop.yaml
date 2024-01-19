@@ -1,0 +1,7 @@
+
+
+json:
+  logger:
+    application:
+      name: "as-micorp-papi"
+      version: "1.0.0"

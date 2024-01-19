@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<sub-flow name="post-item-sub-flow" doc:id="3207b7fe-7488-4095-967c-a2154ae5a4f1" >
+		<json-logger:logger doc:name="Start" doc:id="c9e71348-2297-446a-b021-2b44116c8c29" config-ref="JSON_Logger_Config" message="Creating Items Started"/>
+		<http:request method="POST" doc:name="Create Items" doc:id="3d4b424b-412a-4c2a-b4fa-a3d2e32e1863" responseTimeout="10000000" sendBodyMode="ALWAYS" config-ref="HTTP_Request_configuration" path="/${request.postItem}">
+			<reconnect frequency="7000" count="5" />
+			<http:body><![CDATA[#[output application/json --- payload.items map ((item, index) -> item mapObject ((value, key, index) -> {
+    (key): value
+}) ++ "orderId": vars.orderId)]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id": Mule::p('secure::request.client_id'),
+	"client_secret": Mule::p('secure::request.client_secret')
+}]]]></http:headers>
+		</http:request>
+		<json-logger:logger doc:name="End" doc:id="c9bfa7f8-c101-4f5b-bdc4-7360f46c7833" config-ref="JSON_Logger_Config" message="Creating Item Ended"/>
+	</sub-flow>
+	<sub-flow name="post-order-sub-flow" doc:id="4ec4c080-b534-4f08-b0d0-b90f1a83f5ad" >
+		<json-logger:logger doc:name="Start" doc:id="38d5e5a7-300e-4b91-be32-ee2716a992e0" config-ref="JSON_Logger_Config" message="Creating Orders Started" />
+		<http:request method="POST" doc:name="Create Order" doc:id="6dd7f132-932d-4f90-82d6-45086049d615" target="orderId" responseTimeout="1000000" sendBodyMode="ALWAYS" config-ref="HTTP_Request_configuration" path="/${request.postOrder}" sendCorrelationId="ALWAYS">
+					<http:body><![CDATA[#[output application/json --- payload.order mapObject ((val, key, index) -> ((key) : val)) ++ {"customerId": vars.customerId}]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id": Mule::p('secure::request.client_id'),
+	"client_secret": Mule::p('secure::request.client_secret')
+}]]]></http:headers>
+				</http:request>
+		<json-logger:logger doc:name="End" doc:id="572863dd-f162-4f18-ab33-c8cc3f7b3911" config-ref="JSON_Logger_Config" message="Creating order Ended" />
+	</sub-flow>
+	<sub-flow name="post-customer-sub-flow" doc:id="21776db9-576e-4fd8-96ba-8fcebeda495f" >
+		<json-logger:logger doc:name="Start" doc:id="3e34f698-db8b-4a23-97c3-12a3bfeddf24" config-ref="JSON_Logger_Config" message="Creating Customer Started" />
+		<http:request method="POST" doc:name="Create Customer" doc:id="90eb51d6-8ec3-446d-b82e-1a5747b791ba" responseTimeout="1000000" target="customerId" config-ref="HTTP_Request_configuration" path="/${request.postCustomer}" sendCorrelationId="ALWAYS">
+					<http:body><![CDATA[#[output application/json --- payload.customer]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id": Mule::p('secure::request.client_id'),
+	"client_secret": Mule::p('secure::request.client_secret')
+}]]]></http:headers>
+				</http:request>
+		<json-logger:logger doc:name="End" doc:id="994541be-ff21-4a84-a056-f3e48d721260" config-ref="JSON_Logger_Config" message="Creating Customer Ended" />
+	</sub-flow>
+	<sub-flow name="fetch-customer-sub-flow" doc:id="752d6d68-5018-4990-8586-67f780754020" >
+		<json-logger:logger doc:name="Start" doc:id="be0904a6-32a6-4e08-9f87-32f2e51ad797" config-ref="JSON_Logger_Config" message="Fetching Customer Started" />
+		<http:request method="GET" doc:name="Fetching Customer Details" doc:id="92af2544-d9b1-472d-82c1-c0365ab1d6ff" target="customerId" responseTimeout="1000000" config-ref="HTTP_Request_configuration" path="/${request.getCustomer}" sendCorrelationId="ALWAYS">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id": Mule::p('secure::request.client_id'),
+	"client_secret": Mule::p('secure::request.client_secret')
+}]]]></http:headers>
+			<http:uri-params><![CDATA[#[email: payload.customer.email]]]></http:uri-params>
+		</http:request>
+		<json-logger:logger doc:name="End" doc:id="c89c7d11-f3be-4328-a1a8-e8cd9fcee053" config-ref="JSON_Logger_Config" message="Fetching Customer Ended" />
+	</sub-flow>
+</mule>
